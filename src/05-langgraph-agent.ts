@@ -8,11 +8,9 @@ const graph = buildCodingGraph(model.bindTools(codingTools), codingTools);
 let threadId = crypto.randomUUID();
 
 await runCli("Stage 5: LangGraph coding assistant", async (input) => {
-  // The checkpointer stores prior messages: submit only this new message.
   const result = await graph.invoke(
     { messages: [new HumanMessage(input)] },
-    { configurable: { thread_id: threadId }, recursionLimit: 20 },
+    { configurable: { thread_id: threadId } },
   );
-  const content = result.messages.at(-1)?.content;
-  return typeof content === "string" ? content : JSON.stringify(content);
+  return String(result.messages.at(-1)?.content);
 }, () => { threadId = crypto.randomUUID(); });

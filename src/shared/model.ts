@@ -1,9 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { MODEL, requireApiKey } from "./config";
+import { MODEL, OPENAI_API_KEY } from "./config";
 
 export const model = new ChatOpenAI({
-  apiKey: requireApiKey(),
+  apiKey: OPENAI_API_KEY,
   model: MODEL,
-  timeout: 60_000,
-  maxRetries: 1,
 });

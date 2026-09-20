@@ -1,18 +1,13 @@
 import { StateGraph, StateSchema, MessagesValue, MemorySaver, START, END } from "@langchain/langgraph";
-import { AIMessage, SystemMessage, ToolMessage, type BaseMessage } from "@langchain/core/messages";
-import type { StructuredToolInterface } from "@langchain/core/tools";
+import { SystemMessage, ToolMessage } from "@langchain/core/messages";
 import { CODING_INSTRUCTIONS } from "./instructions";
 
 export const AgentState = new StateSchema({ messages: MessagesValue });
 
-// Injecting the bound model also lets our tests run without an API key.
-export function buildCodingGraph(
-  modelWithTools: { invoke: (messages: BaseMessage[]) => Promise<AIMessage> },
-  tools: StructuredToolInterface[],
-) {
-  const byName = new Map(tools.map((tool) => [tool.name, tool]));
+export function buildCodingGraph(modelWithTools: any, tools: any[]) {
+  const byName = Object.fromEntries(tools.map((tool) => [tool.name, tool]));
 
-  async function assistant(state: typeof AgentState.State) {
+  async function assistant(state: any) {
     console.log("[node] assistant");
     const response = await modelWithTools.invoke([
       new SystemMessage(CODING_INSTRUCTIONS),
@@ -21,29 +16,20 @@ export function buildCodingGraph(
     return { messages: [response] };
   }
 
-  async function executeTools(state: typeof AgentState.State) {
+  async function executeTools(state: any) {
     console.log("[node] tools");
     const last = state.messages.at(-1);
-    if (!AIMessage.isInstance(last)) return { messages: [] };
-    const results: ToolMessage[] = [];
-    // Sequential execution makes file changes easier to follow in class.
-    for (const call of last.tool_calls ?? []) {
-      let content: string;
-      try {
-        const selected = byName.get(call.name);
-        if (!selected) throw new Error(`Unknown tool: ${call.name}`);
-        content = String(await selected.invoke(call.args));
-      } catch (error) {
-        content = `Tool error: ${error instanceof Error ? error.message : String(error)}`;
-      }
-      results.push(new ToolMessage({ content, tool_call_id: call.id!, name: call.name }));
+    const results = [];
+    for (const call of last.tool_calls) {
+      const content = await byName[call.name].invoke(call.args);
+      results.push(new ToolMessage({ content: String(content), tool_call_id: call.id }));
     }
     return { messages: results };
   }
 
-  function routeAfterAssistant(state: typeof AgentState.State) {
+  function routeAfterAssistant(state: any) {
     const last = state.messages.at(-1);
-    return AIMessage.isInstance(last) && last.tool_calls?.length ? "tools" : END;
+    return last.tool_calls?.length ? "tools" : END;
   }
 
   return new StateGraph(AgentState)

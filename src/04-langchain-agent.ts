@@ -1,5 +1,5 @@
 import { createAgent } from "langchain";
-import { HumanMessage, type BaseMessage } from "@langchain/core/messages";
+import { HumanMessage } from "@langchain/core/messages";
 import { model } from "./shared/model";
 import { basicTools } from "./shared/tools";
 import { CODING_INSTRUCTIONS } from "./shared/instructions";
@@ -10,14 +10,10 @@ const agent = createAgent({
   tools: basicTools,
   systemPrompt: CODING_INSTRUCTIONS,
 });
-let messages: BaseMessage[] = [];
+let messages: any[] = [];
 
 await runCli("Stage 4: LangChain coding assistant", async (input) => {
-  const result = await agent.invoke(
-    { messages: [...messages, new HumanMessage(input)] },
-    { recursionLimit: 20 },
-  );
+  const result = await agent.invoke({ messages: [...messages, new HumanMessage(input)] });
   messages = result.messages;
-  const content = messages.at(-1)?.content;
-  return typeof content === "string" ? content : JSON.stringify(content);
+  return String(messages.at(-1)?.content);
 }, () => { messages = []; });

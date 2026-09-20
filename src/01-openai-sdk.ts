@@ -1,11 +1,10 @@
 import OpenAI from "openai";
-import { MODEL, requireApiKey } from "./shared/config";
+import { MODEL, OPENAI_API_KEY } from "./shared/config";
 
-const client = new OpenAI({ apiKey: requireApiKey() });
+const client = new OpenAI({ apiKey: OPENAI_API_KEY });
 const response = await client.responses.create({
   model: MODEL,
   instructions: "You are a friendly programming tutor. Be concise.",
   input: "Explain an AI agent using a college-library example.",
-  store: false,
 });
 console.log(response.output_text);
