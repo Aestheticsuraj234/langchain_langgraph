@@ -1,0 +1,27 @@
+{
+  "name": "bun-coding-agent-workshop",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "http": "bun src/00-openai-http.ts",
+    "openai": "bun src/01-openai-sdk.ts",
+    "model": "bun src/02-langchain-model.ts",
+    "chat": "bun src/03-cli-chat.ts",
+    "tools": "bun src/04-langchain-agent.ts",
+    "agent": "bun src/05-langgraph-agent.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@langchain/core": "1.2.12",
+    "@langchain/langgraph": "1.4.16",
+    "@langchain/openai": "1.5.13",
+    "langchain": "1.5.11",
+    "openai": "7.20.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/bun": "1.4.2",
+    "typescript": "7.0.2"
+  }
+}
