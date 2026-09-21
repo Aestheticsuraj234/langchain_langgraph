@@ -9,6 +9,7 @@
     "@langchain/core": "1.2.12",
     "@langchain/langgraph": "1.4.16",
     "@langchain/openai": "1.5.13",
+    "deepagents": "^1.14.0",
     "langchain": "1.5.11",
     "openai": "7.20.0",
     "zod": "4.6.5"
