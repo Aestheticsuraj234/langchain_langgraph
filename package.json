@@ -1,21 +1,27 @@
 {
-  "name": "bun-coding-agent-workshop",
-  "private": true,
-  "type": "module",
+  "name": "langchain_langgraph",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "bun run src/index.ts"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aestheticsuraj234/langchain_langgraph.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Aestheticsuraj234/langchain_langgraph/issues"
+  },
+  "homepage": "https://github.com/Aestheticsuraj234/langchain_langgraph#readme",
   "dependencies": {
-    "@langchain/core": "1.2.12",
-    "@langchain/langgraph": "1.4.16",
-    "@langchain/openai": "1.5.13",
-    "deepagents": "^1.14.0",
-    "langchain": "1.5.11",
-    "openai": "7.20.0",
-    "zod": "4.6.5"
-  },
-  "devDependencies": {
-    "@types/bun": "1.4.2",
-    "typescript": "7.0.2"
+    "@langchain/core": "^1.2.12",
+    "@langchain/google-genai": "^2.3.2",
+    "langchain": "^1.5.12",
+    "zod": "^4.6.5"
   }
 }
