@@ -2,9 +2,11 @@
   "name": "langchain_langgraph",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +22,9 @@
   "homepage": "https://github.com/Aestheticsuraj234/langchain_langgraph#readme",
   "dependencies": {
     "@langchain/core": "^1.2.12",
-    "@langchain/google-genai": "^2.3.2",
+    "@langchain/openai": "^1.5.13",
+    "@langchain/tavily": "^1.2.0",
+    "dotenv": "^18.0.2",
     "langchain": "^1.5.12",
     "zod": "^4.6.5"
   }
