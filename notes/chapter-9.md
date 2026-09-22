@@ -1,6 +1,6 @@
 ## What is StateGraph?
 
-> Based on [Graph API overview](https://docs.langchain.com/oss/javascript/langgraph/graph-api.md)
+> Based on [Graph API overview](https://docs.langchain.com/oss/javascript/langgraph/graph-api)
 
 ---
 
@@ -54,24 +54,20 @@ Step 4: Compile          (.compile())  ← required before use!
 ```typescript
 import { StateSchema, MessagesValue, StateGraph, START, END } from "@langchain/langgraph";
 
-// 1. State
 const State = new StateSchema({
   messages: MessagesValue,
 });
 
-// 2. Node
 const chatbot = (state) => {
   return { messages: [{ role: "ai", content: "Hello!" }] };
 };
 
-// 3 & 4. Graph + compile
 const graph = new StateGraph(State)
   .addNode("chatbot", chatbot)
   .addEdge(START, "chatbot")
   .addEdge("chatbot", END)
   .compile();
 
-// Run
 await graph.invoke({ messages: [{ role: "user", content: "Hi" }] });
 ```
 
@@ -91,10 +87,8 @@ START → chatbot → END
 | `END` | Exit — graph stops |
 
 ```typescript
-import { START, END } from "@langchain/langgraph";
-
-graph.addEdge(START, "nodeA");   // begin at nodeA
-graph.addEdge("nodeA", END);     // finish after nodeA
+graph.addEdge(START, "nodeA");
+graph.addEdge("nodeA", END);
 ```
 
 ---
@@ -103,16 +97,14 @@ graph.addEdge("nodeA", END);     // finish after nodeA
 
 **State** = the shared data structure every node reads and updates.
 
-Define it with `StateSchema`:
-
 ```typescript
 import { StateSchema, MessagesValue } from "@langchain/langgraph";
 import * as z from "zod";
 
 const State = new StateSchema({
-  messages: MessagesValue,           // chat history (auto-append)
-  step: z.string(),                  // simple field (last write wins)
-  count: z.number().default(0),      // with default
+  messages: MessagesValue,
+  step: z.string(),
+  count: z.number().default(0),
 });
 ```
 
@@ -133,8 +125,6 @@ Nodes **don't return full state** — only **partial updates**:
 
 ```typescript
 const myNode = (state) => {
-  // Read: state.messages, state.count
-  // Return only what changed:
   return { count: state.count + 1 };
 };
 ```
@@ -143,22 +133,13 @@ LangGraph merges updates using **reducers** per field.
 
 ---
 
-### Reducers (simple)
-
-A **reducer** decides how to merge old + new values:
+### Reducers
 
 | Reducer | Behavior | Example field |
 |---------|----------|---------------|
 | **Default** | Replace with new value | `step: "done"` |
 | **MessagesValue** | Append messages, update by ID | `messages` |
 | **ReducedValue** | Custom (e.g. concat arrays) | `allSteps: [...]` |
-
-```typescript
-// Default: { count: 1 } then { count: 2 } → count is 2
-
-// ReducedValue append:
-// { tags: ["a"] } + { tags: ["b"] } → tags: ["a", "b"]
-```
 
 ---
 
@@ -178,7 +159,7 @@ From the docs:
 const graph = new StateGraph(State)
   .addNode(...)
   .addEdge(...)
-  .compile({ checkpointer: new MemorySaver() });  // optional persistence
+  .compile({ checkpointer: new MemorySaver() });
 ```
 
 ---
@@ -186,15 +167,12 @@ const graph = new StateGraph(State)
 ### Running a compiled graph
 
 ```typescript
-// One-shot run
 const result = await graph.invoke({ messages: [...] });
 
-// With thread ID (for memory across runs)
 await graph.invoke(input, {
   configurable: { thread_id: "user-123" },
 });
 
-// Stream updates
 for await (const chunk of await graph.stream(input, { streamMode: "updates" })) {
   console.log(chunk);
 }
@@ -202,22 +180,9 @@ for await (const chunk of await graph.stream(input, { streamMode: "updates" })) 
 
 ---
 
-### StateGraph vs LangChain createAgent
-
-| | `createAgent()` | `StateGraph` |
-|---|-----------------|--------------|
-| Setup | Few lines | Define state, nodes, edges |
-| Control | Framework decides loop | You decide flow |
-| Best for | Standard agents | Custom workflows |
-| Under the hood | Uses LangGraph | Direct LangGraph |
-
-Your LangChain agent ≈ a pre-built StateGraph you don't see.
-
----
-
 ### Execution model (super-steps)
 
-LangGraph runs in **super-steps** (like Pregel / message passing):
+LangGraph runs in **super-steps** (message passing, inspired by Pregel):
 
 1. Active nodes run
 2. They emit updates
@@ -238,11 +203,9 @@ Nodes on the same super-step can run **in parallel**.
 | `StateSchema` | Define shared state |
 | `.addNode(name, fn)` | Add a step |
 | `.addEdge(A, B)` | A always → B |
-| `.addConditionalEdges` | Branch (later chapter) |
+| `.addConditionalEdges` | Branch on condition |
 | `START` / `END` | Entry / exit |
 | `.compile()` | Required before run |
 | `.invoke()` / `.stream()` | Execute |
 
 **Build order:** State → Nodes → Edges → Compile → Invoke
-
-**Next:** Nodes, edges, conditional nodes (then your Notion/Calendar workflows)

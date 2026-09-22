@@ -1,20 +1,10 @@
 ## What is LangGraph?
 
-> Based on [LangGraph overview](https://docs.langchain.com/oss/javascript/langgraph/overview) and [Frameworks vs runtimes](https://docs.langchain.com/oss/javascript/concepts/products.md)
+> Based on [LangGraph overview](https://docs.langchain.com/oss/javascript/langgraph/overview) and [Frameworks vs runtimes](https://docs.langchain.com/oss/javascript/concepts/products)
 
 ---
 
-### Quick recap (where you are)
-
-```
-Step 1–3 ✅  AI, LLM, Agent, Harness
-Step 4–9  ✅  LangChain (agent, tools, messages, streaming, structured output)
-Step 10 →  LangGraph (orchestration layer underneath)
-```
-
----
-
-### What is LangGraph? (simple definition)
+### What is LangGraph?
 
 **LangGraph** is a **low-level orchestration framework and runtime** for building, managing, and deploying **long-running, stateful agents**.
 
@@ -36,7 +26,7 @@ From the docs:
 
 ---
 
-### LangGraph vs LangChain (important!)
+### LangChain vs LangGraph
 
 | | LangChain | LangGraph |
 |---|-----------|-----------|
@@ -88,7 +78,7 @@ From the docs:
 
 ---
 
-### Key capabilities (why it exists)
+### Key capabilities
 
 | Capability | Meaning |
 |------------|---------|
@@ -101,7 +91,7 @@ From the docs:
 
 ---
 
-### Minimal hello-world (from docs)
+### Minimal hello-world
 
 ```typescript
 import { StateSchema, MessagesValue, StateGraph, START, END } from "@langchain/langgraph";
@@ -132,7 +122,7 @@ Flow: `START → mock_llm → END`
 ```
 Deep Agents   →  batteries-included (planning, filesystem, subagents)
 LangChain     →  easy agent building (createAgent)
-LangGraph     →  orchestration runtime (YOU ARE HERE)
+LangGraph     →  orchestration runtime
 LangSmith     →  tracing, debugging, deployment
 ```
 
@@ -148,7 +138,7 @@ Use LangGraph when you need:
 - Agents that run for a long time and must resume
 - Full control over orchestration
 
-Stick with **LangChain `createAgent`** when a simple agent loop is enough.
+Use **LangChain `createAgent`** when a simple agent loop is enough.
 
 ---
 
@@ -161,5 +151,3 @@ Stick with **LangChain `createAgent`** when a simple agent loop is enough.
 - **Edges** = routing
 - Built for production: persistence, HITL, streaming
 - LangChain agents run on LangGraph under the hood
-
-**Next:** What is the use of LangGraph? (concrete use cases)

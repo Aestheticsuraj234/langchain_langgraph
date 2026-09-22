@@ -1,6 +1,6 @@
 ## What is the use of LangGraph?
 
-> Based on [LangGraph overview](https://docs.langchain.com/oss/javascript/langgraph/overview) and [When to use LangGraph](https://docs.langchain.com/oss/javascript/concepts/products.md)
+> Based on [LangGraph overview](https://docs.langchain.com/oss/javascript/langgraph/overview) and [When to use LangGraph](https://docs.langchain.com/oss/javascript/concepts/products)
 
 ---
 
@@ -14,14 +14,14 @@ LangGraph is for when you need **custom orchestration** that a simple loop can't
 
 ---
 
-### LangChain agent loop vs LangGraph workflow
+### Fixed agent loop vs custom workflow
 
-**LangChain (fixed loop):**
+**Standard agent loop:**
 ```
 User → Model → Tool? → Model → Tool? → Model → Answer
 ```
 
-**LangGraph (your design):**
+**Custom LangGraph workflow:**
 ```
 START → fetch_data → analyze → [need human?] → approve → send_email → END
                           ↓ yes
@@ -90,7 +90,7 @@ if (state.needsReview) return "human_review";
 return "auto_publish";
 ```
 
-**Conditional edges** — covered in a later chapter (nodes, edges).
+**Conditional edges** let the graph branch at runtime.
 
 ---
 
@@ -105,12 +105,12 @@ LangGraph supports:
 
 ---
 
-### LangChain vs LangGraph — decision guide
+### Decision guide
 
 | Your need | Use |
 |-----------|-----|
-| CLI chat agent with tools | LangChain `createAgent` ✅ (what you built) |
-| Simple web search agent | LangChain ✅ |
+| CLI chat agent with tools | LangChain `createAgent` |
+| Simple web search agent | LangChain |
 | Notion + Calendar + Email pipeline | LangGraph |
 | Approval before sending email | LangGraph |
 | Multi-agent (researcher + writer) | LangGraph (or Deep Agents) |
@@ -118,7 +118,7 @@ LangGraph supports:
 
 ---
 
-### What LangGraph gives you that `createAgent` hides
+### What LangGraph gives you beyond `createAgent`
 
 | Feature | LangChain | LangGraph |
 |---------|-----------|-----------|
@@ -131,7 +131,7 @@ LangGraph supports:
 
 ---
 
-### Real-world examples (conceptual — no code yet)
+### Real-world examples
 
 | App | Graph idea |
 |-----|------------|
@@ -139,20 +139,6 @@ LangGraph supports:
 | **Research agent** | search → extract → summarize → store → report |
 | **Notion + Calendar** | read Notion → parse tasks → check calendar → suggest slots |
 | **Code reviewer** | read PR → lint → LLM review → post comment |
-
-You'll build examples like these later.
-
----
-
-### How this connects to your project
-
-Your current `src/index.js` uses LangChain:
-
-```javascript
-createAgent({ model, tools, responseFormat })
-```
-
-Under the hood, that's already a LangGraph graph. When you outgrow it — e.g. "after web search, always ask human before posting" — you expose or rebuild that flow with **StateGraph**.
 
 ---
 
@@ -169,5 +155,3 @@ Under the hood, that's already a LangGraph graph. When you outgrow it — e.g. "
 **Stick with LangChain when:**
 
 - Simple chat + tools + structured output is enough
-
-**Next:** What is StateGraph? (the main class you'll use)

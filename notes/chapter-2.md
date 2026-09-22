@@ -1,12 +1,12 @@
-## Step 2: What is an AI Agent? (Model + Harness)
+## What is an AI Agent? (Model + Harness)
 
 ### From LLM to Agent
 
-In Step 1, you learned:
-- **LLM** = the brain (generates text)
-- **Agent** = brain + ability to **do things**
+An **LLM** is the brain — it generates text.
 
-An **AI Agent** is not just a chatbot that replies once. It is a system that:
+An **AI Agent** goes further: it is a system that can **do things**, not just reply once.
+
+An agent:
 1. Understands a goal
 2. Decides what to do
 3. Uses tools if needed
@@ -18,7 +18,7 @@ An agent is like hiring an assistant who can **think, search, call APIs, and kee
 
 ---
 
-### The core formula (from LangChain docs)
+### The core formula
 
 > **Agent = Model + Harness**
 
@@ -27,7 +27,7 @@ An agent is like hiring an assistant who can **think, search, call APIs, and kee
 | **Model** | The LLM (GPT, Claude, Gemini…) | The **brain** — reasons and decides |
 | **Harness** | Code around the model | The **body + rules** — tools, prompts, memory, loop |
 
-From the docs:
+From the [LangChain docs](https://docs.langchain.com/oss/javascript/langchain/overview):
 
 > *"An agent is a model calling tools in a loop until a given task is complete."*  
 > *"A harness is everything around that loop: the prompt, the tools, and any middleware that shapes the model's behavior."*
@@ -57,9 +57,7 @@ Agent:    User → LLM → Tool → LLM → Tool → LLM → Final Answer
 
 ---
 
-### How the agent loop works (simple)
-
-This is the heart of every LangChain agent:
+### How the agent loop works
 
 ```
 1. User sends a message
@@ -84,4 +82,3 @@ Model: "The weather in Mumbai is 32°C and sunny."
   ↓
 Done ✅
 ```
-
