@@ -1,70 +1,40 @@
 import "dotenv/config";
 import readline from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
-import { tavily } from "@tavily/core";
-import { createAgent, tool } from "langchain";
+import {stdin as input , stdout as output} from "node:process";
+import { createAgent } from "langchain";
 import { ChatOpenAI } from "@langchain/openai";
-import * as z from "zod";
+import { visitPage, webSearch } from "./tools/index.js";
 
-if (!process.env.OPENAI_API_KEY || !process.env.TAVILY_API_KEY) {
-  console.error("Missing OPENAI_API_KEY or TAVILY_API_KEY in .env");
-  process.exit(1);
-}
-
-const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
-
-const webSearch = tool(
-  async ({ query }) => {
-    const data = await tvly.search(query, { maxResults: 5 });
-    return JSON.stringify(data.results ?? []);
-  },
-  {
-    name: "web_search",
-    description: "Search the web for information.",
-    schema: z.object({ query: z.string().describe("Search query") }),
-  },
-);
-
-const visitPage = tool(
-  async ({ url }) => {
-    const data = await tvly.extract([url], {
-      extractDepth: "advanced",
-      format: "markdown",
-    });
-    return data.results?.[0]?.rawContent ?? JSON.stringify(data);
-  },
-  {
-    name: "visit_page",
-    description: "Read and extract content from a URL.",
-    schema: z.object({ url: z.string().describe("URL to read") }),
-  },
-);
-
-const Answer = z.object({
-  answer: z.string().describe("Answer for the user"),
-  confidence: z.enum(["low", "medium", "high"]),
-});
 
 const agent = createAgent({
-  model: new ChatOpenAI({ model: "gpt-4o-mini", temperature: 0 }),
-  tools: [webSearch, visitPage],
-  systemPrompt:
-    "Use visit_page for URLs, web_search for general search. Be accurate.",
-  responseFormat: Answer,
+  model:new ChatOpenAI({model:"gpt-4o-mini"}),
+  tools:[webSearch, visitPage],
+  systemPrompt:"Youa re a helpful assistant. Answer clearly and keep replies short. you also have visit_page for urls , web_search for general search"
 });
 
-const rl = readline.createInterface({ input, output });
-console.log('Agent (web search + structured output). Type "exit" to quit.\n');
+const rl = readline.createInterface({input , output});
 
-while (true) {
+console.log("Chat agent. type 'exit' to quit.\n");
+
+while(true){
   const question = await rl.question("You: ");
-  if (question.trim().toLowerCase() === "exit") break;
+
+  if(question.toLowerCase() === "exit") break;
 
   const result = await agent.invoke({
-    messages: [{ role: "user", content: question }],
+    messages:[{role:"human" , content:question}]
   });
 
-  console.log(JSON.stringify(result.structuredResponse, null, 2), "\n");
+  for (const message of result.messages) {
+    if (message.tool_calls?.length) {
+      for (const call of message.tool_calls) {
+        console.log(`Tool: ${call.name}(${JSON.stringify(call.args)})`);
+      }
+    }
+  }
+
+  console.log("Agent:", result.messages.at(-1)?.content, "\n");
+  
 }
 
 rl.close();
