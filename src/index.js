@@ -7,7 +7,7 @@ import { visitPage, webSearch } from "./tools/index.js";
 
 
 const agent = createAgent({
-  model:new ChatOpenAI({model:"gpt-4o-mini"}),
+  model:new ChatOpenAI({model:"gpt-4o-mini", streaming:true}),
   tools:[webSearch, visitPage],
   systemPrompt:"Youa re a helpful assistant. Answer clearly and keep replies short. you also have visit_page for urls , web_search for general search"
 });
@@ -21,20 +21,17 @@ while(true){
 
   if(question.toLowerCase() === "exit") break;
 
-  const result = await agent.invoke({
-    messages:[{role:"human" , content:question}]
-  });
+  const result = await agent.stream(
+    {messages:[{role:"human" , content:question}]},
+    {streamMode:"messages"},
+  );
 
-  for (const message of result.messages) {
-    if (message.tool_calls?.length) {
-      for (const call of message.tool_calls) {
-        console.log(`Tool: ${call.name}(${JSON.stringify(call.args)})`);
-      }
-    }
+  process.stdout.write("Agent: ");
+  for await (const [token] of result) {
+    if (token.type !== "ai" || typeof token.content !== "string") continue;
+    process.stdout.write(token.content);
   }
-
-  console.log("Agent:", result.messages.at(-1)?.content, "\n");
-  
+  console.log("\n");
 }
 
 rl.close();
